@@ -67,7 +67,13 @@ def getNormal(x1,y1,x2,y2, **kwargs):
 
 def boxswarmplot(Title,Ylabel,Data,facecolors,Labels,**kwargs):
 
-    fig,ax = plt.subplots(dpi = 250,facecolor='white',figsize = (5,3.5))
+    FS = (5,3)    
+
+    for key, value in kwargs.items(): 
+        if key == 'figsize':
+            FS = value
+
+    fig,ax = plt.subplots(dpi = 250,facecolor='white',figsize = FS)
     fig.suptitle(Title)
  
     

@@ -430,7 +430,7 @@ def fitOsmoChoc(StackList,Rows,CD,GD,FPH,ImgStartComp,ImgEqComp,TstartComp,ImgSt
         TimeFitComp = np.delete(TimeFitComp,IgnoredCompPoints)
         AreaCFitComp = np.delete(AreaCFitComp,IgnoredCompPoints)
                
-        fig,ax = plt.subplots(dpi=300)
+        fig,ax = plt.subplots(dpi=300,figsize=(4,3))
         ax.plot(Time,AreaC,'*y',ms=3,label='FullData')
         ax.set_xlabel('Time (min)')
         ax.set_ylabel('Area (mm²)')
@@ -481,8 +481,8 @@ def fitOsmoChoc(StackList,Rows,CD,GD,FPH,ImgStartComp,ImgEqComp,TstartComp,ImgSt
         GD.loc[(GD.index == s) & (GD['Img'] == 0), 'ChipRow'] = row
         
         ax.plot(TimeFitComp,AreaCFitComp,'*c',ms=2,label='FittedData')
-        ax.plot(DenseTimeComp,fitFuncOsmChoc2(DenseTimeComp,params2[0],params2[1],params2[2],params2[3],params2[4]),'--g',lw=1,label='SoftL1')
-        ax.plot(DenseTimeComp,fitFuncOsmChoc(DenseTimeComp,params[0],params[1],params[2],params[3]),'--b',lw=1,label='SoftL1')
+        ax.plot(DenseTimeComp,fitFuncOsmChoc2(DenseTimeComp,params2[0],params2[1],params2[2],params2[3],params2[4]),'--b',lw=1,label='SoftL1')
+        # ax.plot(DenseTimeComp,fitFuncOsmChoc(DenseTimeComp,params[0],params[1],params[2],params[3]),'--b',lw=1,label='SoftL1')
         
         # Relaxation fit if valid data
         if np.isin(s,StackListRel):
