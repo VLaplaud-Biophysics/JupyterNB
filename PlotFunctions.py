@@ -10,7 +10,7 @@ from StatsFunctions import plotSig, Corr,TwowayANOVA, StatsKruskal
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy.stats import ks_2samp, linregress
+from scipy.stats import ks_2samp, linregress, ttest_1samp
 from cycler import cycler
 import VallapFunc as vf
 # from tqdm import tqdm
@@ -196,32 +196,28 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
     ######### Parameters of fit ###########
     
       
-    fig4,ax4 = plt.subplots(dpi = 250,facecolor='white',figsize=(2.5,3.5))
+    fig4,ax4 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,3.5))
     fig4.suptitle(Title + ' - Growth start time')
-    plt.ylabel('Tstart (hours)')
       
-    fig5,ax5 = plt.subplots(dpi = 250,facecolor='white',figsize=(2.5,3.5))
-    fig5.suptitle(Title + ' - Growth caracteristic time')
-    plt.ylabel('Tau growth (hours)')
+    fig5,ax5 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,3.5))
+    fig5.suptitle(Title + ' - Growth rate')
     
     fig6,ax6 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,4.5) )
     fig6.suptitle(Title + ' - Starting area') 
-    plt.ylabel('Starting area (mm²)') 
 
     fig16,ax16 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,4.5))
     fig16.suptitle(Title + ' - Initial growth increase')
-    plt.ylabel('Growth at Tstart (%)')
     
     if len(newGDs) == 2:
         # Histogram for distribution comparison
         fig7,ax7 = plt.subplots(dpi = 250,figsize = (5,3.5),facecolor='white')
-        fig7.suptitle(Title + ' - Growth caracteristic times')
-        plt.xlabel('Tau growth (hours)')
+        fig7.suptitle(Title + ' - Growth rate')
+        plt.xlabel('G ' + r"$\mathrm{(days^{-1})}$")
         plt.ylabel('PDF')
 
         fig8,ax8 = plt.subplots(dpi = 250,figsize = (5,3.5),facecolor='white')
         fig8.suptitle(Title + ' - Growth start time')
-        plt.xlabel('Tstart (min)')
+        plt.xlabel(r"$\mathrm{T_s (min)}$")
         plt.ylabel('PDF')
         
         fig9,ax9 = plt.subplots(dpi = 250,figsize = (5,3.5),facecolor='white')
@@ -235,7 +231,7 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
         plt.ylabel('PDF')
     
     tdebs= [None]*len(newGDs)
-    taus= [None]*len(newGDs)
+    Gs= [None]*len(newGDs)
     captdeb= [None]*len(newGDs)
     captau= [None]*len(newGDs)
     medtdeb= [None]*len(newGDs)
@@ -261,7 +257,7 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
         
         # Retrieve data
         tdebs[i] = GD.loc[GD['Img'] == 0, 'tdeb']/60
-        taus[i] = GD.loc[GD['Img'] == 0, 'Tau']/60 *np.log(2)         
+        Gs[i] = 24*60/(GD.loc[GD['Img'] == 0, 'Tau'])   # growth rate in day-1     
         Area0[i] = GD.loc[GD['Img'] == 0, 'A0fit'] 
         AreaStart[i] = GD.loc[GD['Img'] == 0, 'GrowthAtStart_flat']*100
         
@@ -277,7 +273,7 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
         bp4 = ax4.boxplot(tdebs[i], positions = [i], labels = [lab],patch_artist = True, boxprops=boxprops, capprops =plotprops,
                     showfliers = False,whiskerprops=plotprops,medianprops =plotprops)
         
-        bp5 = ax5.boxplot(taus[i], positions = [i], labels = [lab],patch_artist = True, boxprops=boxprops, capprops =plotprops,
+        bp5 = ax5.boxplot(Gs[i], positions = [i], labels = [lab],patch_artist = True, boxprops=boxprops, capprops =plotprops,
                     showfliers = False,whiskerprops=plotprops,medianprops =plotprops)
         
         bp6 = ax6.boxplot(Area0[i], positions = [i], labels = [lab],patch_artist = True, boxprops=boxprops, capprops =plotprops, 
@@ -297,16 +293,16 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
         
         if len(newGDs) == 2:
         
-            ax7.hist(taus[i], nbins, density=True, facecolor=colors[i], alpha=0.5)
+            ax7.hist(Gs[i], nbins, density=True, facecolor=colors[i], alpha=0.5)
             ax8.hist(tdebs[i], nbins, density=True, facecolor=colors[i], alpha=0.5)
-            ax9.hist(taus[i]-np.median(taus[i]), nbins, density=True, facecolor=colors[i], alpha=0.5)
+            ax9.hist(Gs[i]-np.median(Gs[i]), nbins, density=True, facecolor=colors[i], alpha=0.5)
             ax10.hist(tdebs[i]-np.median(tdebs[i]), nbins, density=True, facecolor=colors[i], alpha=0.5)
 
             
-    sns.swarmplot(x=grouping,y=pd.concat(tdebs),color = 'lightgray', size=2, ax = ax4)
-    sns.swarmplot(x=grouping,y=pd.concat(taus),color = 'lightgray', size=2, ax = ax5)
-    sns.swarmplot(x=grouping,y=pd.concat(Area0),color = 'lightgray', size=2, ax = ax6) 
-    sns.swarmplot(x=grouping,y=pd.concat(AreaStart),color = 'lightgray', size=2, ax = ax16)
+    sns.swarmplot(x=grouping,y=pd.concat(tdebs),color = 'gray', size=2, ax = ax4)
+    sns.swarmplot(x=grouping,y=pd.concat(Gs),color = 'gray', size=2, ax = ax5)
+    sns.swarmplot(x=grouping,y=pd.concat(Area0),color = 'gray', size=2, ax = ax6) 
+    sns.swarmplot(x=grouping,y=pd.concat(AreaStart),color = 'gray', size=2, ax = ax16)
     
     ax4.set_xticklabels(labs)
     ax5.set_xticklabels(labs)
@@ -315,7 +311,7 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
 
     if len(newGDs) == 2:
         # Distribution comparison with two-sample kolmogorov smirnov test
-        statsTau, pTau =  ks_2samp(taus[0],taus[1])
+        statsTau, pTau =  ks_2samp(Gs[0],Gs[1])
         ax7.set_title('KS test - p = ' + str(round(pTau*1000)/1000))
         fig7.tight_layout()
         
@@ -323,7 +319,7 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
         ax8.set_title('KS test - p = ' + str(round(pTdeb*1000)/1000))
         fig8.tight_layout()
         
-        statsTau, pTau =  ks_2samp(taus[0]-np.median(taus[0]),taus[1]-np.median(taus[1]))
+        statsTau, pTau =  ks_2samp(Gs[0]-np.median(Gs[0]),Gs[1]-np.median(Gs[1]))
         ax9.set_title('KS test - p = ' + str(round(pTau*1000)/1000))
         fig9.tight_layout()
         
@@ -359,7 +355,7 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
 
                     fullsteptdeb = plotSig(ax4,hmaxtdeb,steptdeb,fullsteptdeb,tdebs[i],tdebs[j],i,j)
 
-                    fullsteptau = plotSig(ax5,hmaxtau,steptau,fullsteptau,taus[i],taus[j],i,j)
+                    fullsteptau = plotSig(ax5,hmaxtau,steptau,fullsteptau,Gs[i],Gs[j],i,j)
                     
                     fullstepArea0 = plotSig(ax6,hmaxArea0,stepArea0,fullstepArea0,Area0[i],Area0[j],i,j) 
 
@@ -370,7 +366,7 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
 
                 fullsteptdeb = plotSig(ax4,hmaxtdeb,steptdeb,fullsteptdeb,tdebs[i],tdebs[j],i,j)
 
-                fullsteptau = plotSig(ax5,hmaxtau,steptau,fullsteptau,taus[i],taus[j],i,j)
+                fullsteptau = plotSig(ax5,hmaxtau,steptau,fullsteptau,Gs[i],Gs[j],i,j)
  
                 fullstepArea0 = plotSig(ax6,hmaxArea0,stepArea0,fullstepArea0,Area0[i],Area0[j],i,j) 
 
@@ -379,13 +375,15 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
     elif stats == 'kruskal':
         
         StatsKruskal(ax4,tdebs)
-        StatsKruskal(ax5,taus)
+        StatsKruskal(ax5,Gs)
         StatsKruskal(ax6,Area0)
         StatsKruskal(ax16,AreaStart)
                
-    ax4.set_ylabel('Tstart (hours)')
+    ax4.set_ylabel(r"$\mathrm{T_s}$" + ' (hours)')
+    ax4.set_ylim(bottom=0)
       
-    ax5.set_ylabel('Area doubling (hours)')
+    ax5.set_ylabel('G ' + r"$\mathrm{(days^{-1})}$")
+    ax5.set_ylim(bottom=0)
     
     ax6.set_ylabel('Starting area (mm²)') 
 
@@ -404,7 +402,7 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
         return  
     elif stats == 'ANOVA':
         for v,med,fig,ax,dat in zip(['tdeb','Tau','A0fit','GrowthAtStart_flat'],[medtdeb,medtau,medArea0,medAreaStart],[fig4,fig5,fig6,fig16],[ax4,ax5,ax6,ax16],
-                                    [pd.concat(tdebs),pd.concat(taus),pd.concat(Area0),pd.concat(AreaStart)]):
+                                    [pd.concat(tdebs),pd.concat(Gs),pd.concat(Area0),pd.concat(AreaStart)]):
 
             res = TwowayANOVA(v,diffcat,groupcat,GDs);
 
@@ -528,17 +526,24 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
             
             
             if showhist:
+                
+                s,p = ttest_1samp(Eratios[i], 100, axis=0, nan_policy='omit')
+                
                 fig00, ax00 = plt.subplots(dpi=300,figsize = (2.5,3.5))
                 ax00.hist(Eratios[i], facecolor=colors[i]) # ,density = True
-                fig00.suptitle('Median : ' + str(np.round(Eratios[i].median()*100)/100) + 
-                               ' - Mean : ' + str(np.round(Eratios[i].mean()*100)/100))
+                fig00.suptitle('Mean : ' + str(np.round(Eratios[i].mean()*100)/100) + ' \np = ' + str(np.round(p*1000)/1000))
                 ax00.set_xlabel('Reversibility level')
                 ax00.set_ylabel('Count')
+                ax00.legend(['mean = ' + str(np.round(Eratios[i].mean()*100)/100) + ' \np = ' + str(np.round(p*1000)/1000)],fontsize='xx-small',loc = 'upper right')
+                
+                fig00.tight_layout()
+                
+                
+                
+                
                 # fig00.savefig(P + '\\Hydromechanics\\' + lab + '_EComp-Rel_Dist.png')
                 if not showE:
                     plt.close(fig00)
-                
-                
                 
     
                 linreg = linregress(Ecomps[i],Erels[i])
@@ -583,7 +588,7 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
     
     ### boxplots
     fig1,ax1,capEcomp,medEcomp = vf.boxswarmplot(Title + '\n\nElastic bulk modulus (compression)','E (MPa)',
-                                                 Ecomps,colors,Labels[:],figsize=(7, 3.5))
+                                                 Ecomps,colors,Labels[:],figsize=(6,3.5))
     
     fig10,ax10,capEratio,medEratio = vf.boxswarmplot(Title + '\n\nElastic reversibility','Reversibility (%)',
                                                  Eratios,colors,Labels[:],figsize=(7, 3.5))

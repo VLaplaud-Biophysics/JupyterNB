@@ -6,7 +6,7 @@ Created on Thu Jun 23 15:43:06 2022
 """
 
 # Imports
-from scipy.stats import ranksums, linregress, kruskal, pearsonr
+from scipy.stats import ranksums, linregress, kruskal, pearsonr, spearmanr
 
 import numpy as np
 import numpy.matlib as mtl
@@ -88,7 +88,8 @@ def Corr(GDs,labels, **kwargs):
         else:
             GDtoCorr = GD.loc[GD['Img'] == 0, dfcols]
         corrMat = GDtoCorr.corr(method=corrmethod)
-        pvalMat = GDtoCorr.corr(method=lambda x, y: pearsonr(x, y)[1])
+        pvalMat = GDtoCorr.corr(method=lambda x, y: spearmanr(x, y).pvalue)
+        
         
         plt.figure(dpi=250,facecolor = 'white')
         plt.title(corrmethod + ' correlation for \n' + lab)
@@ -130,12 +131,16 @@ def Corr(GDs,labels, **kwargs):
                         g = sns.jointplot(x=x[mask],y=y[mask],kind=plotkind,color = colo,height = 12)
                         
                         if corrmethod=='pearson':
-                            g.ax_joint.legend([f"S = {linreg.slope:.2f}",
+                            g.ax_joint.legend([f"n= = {linreg.slope:.2f}",
                                             f"CC = {linreg.rvalue:.3f}\nP = {linreg.pvalue:.3f}"],
-                                          fontsize='xx-large')
+                                          fontsize='larger')
+                            
+                        else:
+                            g.ax_joint.legend([f"n = {len(x[mask]):.0f}\nCC = {corrMat.loc[dfcols[i],dfcols[j]]:.3f}\nP = {pvalMat.loc[dfcols[i],dfcols[j]]:.3f}"],
+                                          fontsize=25)
                     
                     g.fig.suptitle('Correlation between ' + dfcols[i] + ' and ' + dfcols[j] +
-                                '.\n Experiment : ' + lab + ' - n = ' + str(len(x[mask])),fontsize=30)
+                                '.\n Experiment : ' + lab + ' - n = ' + str(len(x[mask])) + ' - p = ' + str(np.round(1000*pvalMat.loc[dfcols[i],dfcols[j]])/1000),fontsize=30)
                     g.fig.patch.set_facecolor('white')
                     g.ax_joint.set_xlabel(colslab[i],fontsize = 35)
                     g.ax_joint.set_ylabel(colslab[j],fontsize = 35)

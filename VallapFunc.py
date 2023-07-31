@@ -100,7 +100,7 @@ def boxswarmplot(Title,Ylabel,Data,facecolors,Labels,**kwargs):
         cap[i] = bp['caps'][1].get_ydata(orig=True)[0]
         med[i] = bp['medians'][0].get_ydata(orig=True)[0]
     
-    sns.swarmplot(x=grouping,y=pd.concat(Data),color = 'lightgray', size=2, ax = ax)
+    sns.swarmplot(x=grouping,y=pd.concat(Data),color = 'gray', size=2, ax = ax)
     
     ax.set_ylabel(Ylabel)
     
@@ -296,7 +296,8 @@ def GrowthRate(A,Time):
     dt = np.diff(Time)
     
     dAdt = np.divide(dA,dt)
-    dAdt_S = savgol_filter(dAdt, 11, 3)    
+    windowlength =  np.min([11,int(np.floor(len(dAdt)/2)*2-1)])
+    dAdt_S = savgol_filter(dAdt, windowlength , np.min([3,windowlength-1]))    
     
     intTime = Time[0:-1]+dt/2
     
@@ -304,7 +305,9 @@ def GrowthRate(A,Time):
     inv_f = interp1d(Time,inv_A)
     inv_A_timed = inv_f(intTime)
     
-    inv_A_S = savgol_filter(inv_A_timed,11, 3)
+    
+    windowlength =  np.min([11,int(np.floor(len(inv_A_timed)/2)*2-1)])
+    inv_A_S = savgol_filter(inv_A_timed,windowlength, np.min([3,windowlength-1]))
     
     
     GR = np.multiply(inv_A_timed,dAdt)
