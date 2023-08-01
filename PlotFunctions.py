@@ -196,16 +196,16 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
     ######### Parameters of fit ###########
     
       
-    fig4,ax4 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,3.5))
+    fig4,ax4 = plt.subplots(dpi = 250,facecolor='white',figsize=(3.5,2.25))
     fig4.suptitle(Title + ' - Growth start time')
       
-    fig5,ax5 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,3.5))
+    fig5,ax5 = plt.subplots(dpi = 250,facecolor='white',figsize=(3.5,2.25))
     fig5.suptitle(Title + ' - Growth rate')
     
-    fig6,ax6 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,4.5) )
+    fig6,ax6 = plt.subplots(dpi = 250,facecolor='white',figsize=(3.5,2.25))
     fig6.suptitle(Title + ' - Starting area') 
 
-    fig16,ax16 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,4.5))
+    fig16,ax16 = plt.subplots(dpi = 250,facecolor='white',figsize=(3.5,2.25))
     fig16.suptitle(Title + ' - Initial growth increase')
     
     if len(newGDs) == 2:
@@ -385,7 +385,7 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
     ax5.set_ylabel('G ' + r"$\mathrm{(days^{-1})}$")
     ax5.set_ylim(bottom=0)
     
-    ax6.set_ylabel('Starting area (mm²)') 
+    ax6.set_ylabel(r"$\mathrm{A_s}$" + ' (mm²)') 
 
     ax16.set_ylabel('Growth at Tstart (%)')   
  
@@ -591,7 +591,7 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
                                                  Ecomps,colors,Labels[:],figsize=(6,3.5))
     
     fig10,ax10,capEratio,medEratio = vf.boxswarmplot(Title + '\n\nElastic reversibility','Reversibility (%)',
-                                                 Eratios,colors,Labels[:],figsize=(7, 3.5))
+                                                 Eratios,colors,Labels[:],figsize=(6, 3.5))
 
     fig2,ax2,capLcomp,medLcomp = vf.boxswarmplot(Title + '\n\nConductivity (compression)','L/H0_Comp (min-1)',Lcomps,colors,Labels[:])
     fig20,ax20,capLrel,medLrel = vf.boxswarmplot(Title + '\n\nConductivity (relaxation)','L/H0_Rel (min-1)',Lrels,colors,Labels[:])       

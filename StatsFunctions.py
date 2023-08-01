@@ -88,8 +88,11 @@ def Corr(GDs,labels, **kwargs):
         else:
             GDtoCorr = GD.loc[GD['Img'] == 0, dfcols]
         corrMat = GDtoCorr.corr(method=corrmethod)
-        pvalMat = GDtoCorr.corr(method=lambda x, y: spearmanr(x, y).pvalue)
         
+        if corrmethod == 'spearman' :
+            pvalMat = GDtoCorr.corr(method=lambda x, y: spearmanr(x, y).pvalue)
+        else:
+            pvalMat = GDtoCorr.corr(method=lambda x, y: pearsonr(x, y)[1])
         
         plt.figure(dpi=250,facecolor = 'white')
         plt.title(corrmethod + ' correlation for \n' + lab)
