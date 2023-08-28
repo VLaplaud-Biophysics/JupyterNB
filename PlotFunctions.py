@@ -196,10 +196,10 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
     ######### Parameters of fit ###########
     
       
-    fig4,ax4 = plt.subplots(dpi = 250,facecolor='white',figsize=(3.5,2.25))
+    fig4,ax4 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,3.5))
     fig4.suptitle(Title + ' - Growth start time')
       
-    fig5,ax5 = plt.subplots(dpi = 250,facecolor='white',figsize=(3.5,2.25))
+    fig5,ax5 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,3.5))
     fig5.suptitle(Title + ' - Growth rate')
     
     fig6,ax6 = plt.subplots(dpi = 250,facecolor='white',figsize=(3.5,2.25))
