@@ -527,12 +527,19 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
                 
                 s,p = ttest_1samp(RevA[i], 100, axis=0, nan_policy='omit')
                 
-                fig00, ax00 = plt.subplots(dpi=300,figsize = (2.5,3.5))
+                if p > 0.001:
+                    pstring = '{0:.3f}'.format(p)
+                elif p > 0.0000000001:
+                    pstring = '{0:.1e}'.format(p)
+                else:
+                    pstring = '{0:.0f}'.format(0)
+                
+                fig00, ax00 = plt.subplots(dpi=300,figsize = (3,4.2))
                 ax00.hist(RevA[i], facecolor=colors[i]) # ,density = True
-                fig00.suptitle('Mean : ' + str(np.round(RevA[i].mean()*100)/100) + ' \np = ' + str(np.round(p*1000)/1000))
-                ax00.set_xlabel('Deformation reversibility')
+                fig00.suptitle('Mean : ' + str(np.round(RevA[i].mean()*100)/100) + ' \np = ' + pstring)
+                ax00.set_xlabel('Deformation reversibility (%)')
                 ax00.set_ylabel('Count')
-                ax00.legend(['mean = ' + str(np.round(RevA[i].mean()*100)/100) + ' \np = ' + str(np.round(p*1000)/1000)],fontsize='xx-small',loc = 'upper right')
+                ax00.legend(['mean = ' + str(np.round(RevA[i].mean()*100)/100) + ' \np = ' + pstring],fontsize='small',loc = 'upper right')
                 
                 fig00.tight_layout()
                 
@@ -577,7 +584,7 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
     ### E ratios histograms
     ax3['a'].hist(AllRatios,color='gray', density = True, label = 'Pooled data')
     ax3['a'].set_ylabel('Density')
-    ax3['a'].set_xlabel('Reversibility')
+    ax3['a'].set_xlabel('Deformation reversibility')
     ax3['a'].set_title('Mean : ' + '{0:.2f}'.format(AllRatios.mean()))
     ax3['a'].legend()
     f3.tight_layout()
@@ -586,10 +593,10 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
     
     ### boxplots
     fig1,ax1,capEcomp,medEcomp = vf.boxswarmplot(Title + '\n\nElastic bulk modulus (compression)','E (MPa)',
-                                                 Ecomps,colors,Labels[:],figsize=(6,3.5))
+                                                 Ecomps,colors,Labels[:],figsize=(3,4.2))
     
-    fig10,ax10,capEratio,medEratio = vf.boxswarmplot(Title + '\n\nElastic reversibility','Reversibility (%)',
-                                                 RevA,colors,Labels[:],figsize=(6, 3.5))
+    fig10,ax10,capRevA,medRevA = vf.boxswarmplot(Title + '\n\nDeformation reversibility','Reversibility (%)',
+                                                 RevA,colors,Labels[:],figsize=(3,4.2))
 
     fig2,ax2,capLcomp,medLcomp = vf.boxswarmplot(Title + '\n\nConductivity (compression)','L/H0_Comp (min-1)',Lcomps,colors,Labels[:])
     fig20,ax20,capLrel,medLrel = vf.boxswarmplot(Title + '\n\nConductivity (relaxation)','L/H0_Rel (min-1)',Lrels,colors,Labels[:])       
@@ -597,7 +604,7 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
 
     ### stats
     fullstepEcomp = 0
-    fullstepEratio = 0
+    fullstepRevA = 0
     fullstepLcomp = 0
     fullstepLrel = 0
     
@@ -607,7 +614,7 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
                 for j in range(i+1,len(GDs)):
 
                     fullstepEcomp = plotSig(ax1,np.max(capEcomp),np.max(capEcomp)*0.125,fullstepEcomp,Ecomps[i],Ecomps[j],i,j)
-                    fullstepEratio = plotSig(ax10,np.max(capEratio),np.max(capEratio)*0.125,fullstepEratio,RevA[i],RevA[j],i,j)
+                    fullstepRevA = plotSig(ax10,np.max(capRevA),np.max(capRevA)*0.125,fullstepRevA,RevA[i],RevA[j],i,j)
                     fullstepLcomp = plotSig(ax2,np.max(capLcomp),np.max(capLcomp)*0.125,fullstepLcomp,Lcomps[i],Lcomps[j],i,j)
                     fullstepLrel = plotSig(ax20,np.max(capLrel),np.max(capLrel)*0.125,fullstepLrel,Lrels[i],Lrels[j],i,j)
 
@@ -615,7 +622,7 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
             for i,j in sigpairs:
 
                     fullstepEcomp = plotSig(ax1,np.max(capEcomp),np.max(capEcomp)*0.125,fullstepEcomp,Ecomps[i],Ecomps[j],i,j)
-                    fullstepEratio = plotSig(ax10,np.max(capEratio),np.max(capEratio)*0.125,fullstepEratio,RevA[i],RevA[j],i,j)
+                    fullstepRevA = plotSig(ax10,np.max(capRevA),np.max(capRevA)*0.125,fullstepRevA,RevA[i],RevA[j],i,j)
                     fullstepLcomp = plotSig(ax2,np.max(capLcomp),np.max(capLcomp)*0.125,fullstepLcomp,Lcomps[i],Lcomps[j],i,j)
                     fullstepLrel = plotSig(ax20,np.max(capLrel),np.max(capLrel)*0.125,fullstepLrel,Lrels[i],Lrels[j],i,j)
 
@@ -628,7 +635,7 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
     if stats=='ranksum':
         # fig1.savefig(P + '\\Hydromechanics\\' + Title + '_Ecomp.png')
         # fig2.savefig(P + '\\Hydromechanics\\'+ Title +  '_TauFluxComp.png')
-        # fig10.savefig(P + '\\Hydromechanics\\' + Title + '_Eratio.png')
+        # fig10.savefig(P + '\\Hydromechanics\\' + Title + '_RevA.png')
         # fig20.savefig(P + '\\Hydromechanics\\'+ Title +  '_TauFluxrel.png')
         # fig11.savefig(P + '\\Hydromechanics\\' + Title + '_E.png')
         if not showbox:

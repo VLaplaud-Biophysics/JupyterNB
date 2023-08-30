@@ -307,7 +307,7 @@ def fitAreaGrowth(StackList,Rows,GD,FPH,Delay,Th, **kwargs):
             ax02.set_ylabel('Area (mm²)')
             # ax02.set_xscale('log')
             # ax02.set_yscale('log')
-            ax02.legend(['Gemmae area', 'Fitted data', 'Exponential fit'])
+            ax02.legend(['Gemmae area', 'Fitted data', 'Fit'])
     
             fig0.tight_layout()
             
@@ -433,7 +433,7 @@ def fitOsmoChoc(StackList,Rows,CD,GD,FPH,ImgStartComp,ImgEqComp,TstartComp,ImgSt
         AreaCFitComp = np.delete(AreaCFitComp,IgnoredCompPoints)
                
         fig,ax = plt.subplots(dpi=300,figsize=(4,3))
-        ax.plot(Time,AreaC,'*y',ms=3,label='FullData')
+        ax.plot(Time,AreaC,'*y',ms=3,label='Gemma area')
         ax.set_xlabel('Time (min)')
         ax.set_ylabel('Area (mm²)')
 
@@ -482,7 +482,7 @@ def fitOsmoChoc(StackList,Rows,CD,GD,FPH,ImgStartComp,ImgEqComp,TstartComp,ImgSt
         
         GD.loc[(GD.index == s) & (GD['Img'] == 0), 'ChipRow'] = row
         
-        ax.plot(TimeFitComp,AreaCFitComp,'*c',ms=2,label='FittedData')
+        ax.plot(TimeFitComp,AreaCFitComp,'*c',ms=2,label='Fitted Data')
         ax.plot(DenseTimeComp,fitFuncOsmChoc2(DenseTimeComp,params2[0],params2[1],params2[2],params2[3],params2[4]),'--b',lw=1,label='SoftL1')
         # ax.plot(DenseTimeComp,fitFuncOsmChoc(DenseTimeComp,params[0],params[1],params[2],params[3]),'--b',lw=1,label='SoftL1')
         
@@ -520,7 +520,7 @@ def fitOsmoChoc(StackList,Rows,CD,GD,FPH,ImgStartComp,ImgEqComp,TstartComp,ImgSt
             GD.loc[(GD.index == s) & (GD['Img'] == 0), 'A0Rel-AeqRel'] = paramsRel[1]-paramsRel[2]        
             GD.loc[(GD.index == s) & (GD['Img'] == 0), 'Erel'] = Erel         
             GD.loc[(GD.index == s) & (GD['Img'] == 0), 'RevE'] = Erel/Eg 
-            GD.loc[(GD.index == s) & (GD['Img'] == 0), 'RevA'] = paramsRel[2]-paramsRel[1]/params2[1]-params2[2]
+            GD.loc[(GD.index == s) & (GD['Img'] == 0), 'RevA'] = np.abs((paramsRel[2]-paramsRel[1])/(params2[1]-params2[2]))
             GD.loc[(GD.index == s) & (GD['Img'] == 0), '1/Erel'] = 1/Erel     
             GD.loc[(GD.index == s) & (GD['Img'] == 0), 'L/H_Rel'] = LhRel    
             # GD.loc[(GD.index == s) & (GD['Img'] == 0), 'L_Rel'] = LhRel*GD.loc[(GD.index == s) & (GD['Img'] == 0), 'H0'] 

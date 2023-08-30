@@ -27,6 +27,15 @@ import seaborn as sns
 def plotSig(ax,hmax,step,fullstep,data1,data2,pos1,pos2):
     
     s,p = ranksums(data1,data2)
+    
+    
+    if p > 0.001:
+        pstring = '{0:.3f}'.format(p)
+    elif p > 0.0000000001:
+        pstring = '{0:.1e}'.format(p)
+    else:
+        pstring = '{0:.0f}'.format(0)
+    
     mad = np.mean(np.abs(data1-np.median(data1)))
     ES = (np.median(data2)-np.median(data1))/mad
     RC = (np.median(data2)-np.median(data1))/np.median(data1)
@@ -34,7 +43,7 @@ def plotSig(ax,hmax,step,fullstep,data1,data2,pos1,pos2):
     if pos2 == pos1+1: 
         h = np.median([np.median(data1),np.median(data2)])
         ax.plot([pos1+0.2, pos2-0.2], [h ,h], 'k-',zorder=0)
-        ax.text((pos1+pos2)/2,h+0.2*step,'p = ' + '{0:.3f}'.format(np.round(p*1000)/1000) + '\nRC = ' + str(np.round(RC*100)) + 
+        ax.text((pos1+pos2)/2,h+0.2*step,'p = ' + pstring + '\nRC = ' + str(np.round(RC*100)) + 
                 ' %\nES = ' + str(np.round(ES*10)/10), ha='center',fontsize='small')
         ax.set_ylim(top=hmax+fullstep+step)
             
@@ -42,7 +51,7 @@ def plotSig(ax,hmax,step,fullstep,data1,data2,pos1,pos2):
         h = hmax
         fullstep += step
         ax.plot([pos1, pos2], [h+fullstep ,h+fullstep], 'k-',zorder=0)
-        ax.text((pos1+pos2)/2,h+fullstep+0.2*step,'p = ' + '{0:.3f}'.format(np.round(p*1000)/1000) + '\nRC = ' + str(np.round(RC*100)) + 
+        ax.text((pos1+pos2)/2,h+fullstep+0.2*step,'p = ' + pstring + '\nRC = ' + str(np.round(RC*100)) + 
                 ' %\nES = ' + str(np.round(ES*10)/10), ha='center',fontsize='small')
         ax.set_ylim(top=h+fullstep+step)
 
@@ -139,11 +148,11 @@ def Corr(GDs,labels, **kwargs):
                         
                         if corrmethod=='pearson':
                             g.ax_joint.legend([f"n= = {linreg.slope:.2f}",
-                                            f"CC = {linreg.rvalue:.3f}\nP = {linreg.pvalue:.3f}"],
+                                            f"CC = {linreg.rvalue:.3f}\nP = {linreg.pvalue:.1e}"],
                                           fontsize='larger')
                             
                         else:
-                            g.ax_joint.legend([f"n = {len(x[mask]):.0f}\nCC = {corrMat.loc[dfcols[i],dfcols[j]]:.3f}\nP = {pvalMat.loc[dfcols[i],dfcols[j]]:.3f}"],
+                            g.ax_joint.legend([f"n = {len(x[mask]):.0f}\nCC = {corrMat.loc[dfcols[i],dfcols[j]]:.3f}\nP = {pvalMat.loc[dfcols[i],dfcols[j]]:.1e}"],
                                           fontsize=25)
                     
                     g.fig.suptitle('Correlation between ' + dfcols[i] + ' and ' + dfcols[j] +
@@ -151,6 +160,8 @@ def Corr(GDs,labels, **kwargs):
                     g.fig.patch.set_facecolor('white')
                     g.ax_joint.set_xlabel(colslab[i],fontsize = 35)
                     g.ax_joint.set_ylabel(colslab[j],fontsize = 35)
+                    # g.ax_joint.set_ylim([0,110])
+                    # g.ax_joint.set_xlim(left=0)
                     g.ax_joint.tick_params(axis='both', labelsize=30)
                     
                     

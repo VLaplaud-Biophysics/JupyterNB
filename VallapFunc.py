@@ -330,19 +330,35 @@ def mosaicList(n):
 
 # 11. Function generating a summary of data and their variability for a specific dataframe column
 
-def dataSummary(GDs,Ns,labels,Mult,col,name,unit):
+def dataSummary(GDs,Ns,labels,Mult,col,name,unit,method):
     DataPooled = np.empty(0)
     nPooled = np.sum(Ns)
     
-    print(name + ' : ')
     
-    for GD,n,lab in zip(GDs,Ns,labels):
-        DataMedian =  np.round(GD.loc[GD['Img'] == 0,col].median()*Mult*100)/100
-        Var =  np.round(   np.mean(np.abs(GD.loc[GD['Img'] == 0,col]*Mult-DataMedian))*10000/DataMedian)/100
-        DataPooled = np.append(DataPooled,GD.loc[GD['Img'] == 0,col].to_numpy())
-        print(lab + ' -> ' + str(DataMedian) + ' ' + unit + ' ' + u"\u00B1" + ' ' + str(Var) + ' %' + ' % (n = ' + str(n) + ')')
     
-    PooledMedian = np.round(np.median(DataPooled)*Mult*100)/100
-    PooledVar = np.round(np.mean(np.abs(DataPooled*Mult - PooledMedian))*10000/PooledMedian)/100
-    print('Pooled -> ' + str(PooledMedian) + ' ' + unit + ' ' + u"\u00B1" + ' ' + str(PooledVar) + ' %' + ' % (n = ' + str(nPooled) + ')' )
+    if method == 'mean' :
+        print(name + ' (mean + STE) : ')
+        
+        for GD,n,lab in zip(GDs,Ns,labels):
+            DataMean =  np.round(GD.loc[GD['Img'] == 0,col].mean()*Mult*100)/100
+            Var =  np.round(GD.loc[GD['Img'] == 0,col].std()/np.sqrt(n)*Mult*100)/100
+            DataPooled = np.append(DataPooled,GD.loc[GD['Img'] == 0,col].to_numpy())
+            print(lab + ' -> ' + str(DataMean) + ' ' + unit + ' ' + u"\u00B1" + ' ' + str(Var)  + unit + ' (n = ' + str(n) + ')')
+    
+        PooledMean = np.round(np.mean(DataPooled)*Mult*100)/100
+        PooledVar = np.round(np.std(DataPooled)/np.sqrt(np.sum(Ns))*Mult*100)/100
+        print('Pooled -> ' + str(PooledMean) + ' ' + unit + ' ' + u"\u00B1" + ' ' + str(PooledVar)  + unit +  '  (n = ' + str(nPooled) + ')' )
+        
+    else:
+        print(name + ' (median + AAD/med) : ')
+        
+        for GD,n,lab in zip(GDs,Ns,labels):
+            DataMedian =  np.round(GD.loc[GD['Img'] == 0,col].median()*Mult*100)/100
+            Var =  np.round(   np.mean(np.abs(GD.loc[GD['Img'] == 0,col]*Mult-DataMedian))*10000/DataMedian)/100
+            DataPooled = np.append(DataPooled,GD.loc[GD['Img'] == 0,col].to_numpy())
+            print(lab + ' -> ' + str(DataMedian) + ' ' + unit + ' ' + u"\u00B1" + ' ' + str(Var)  + ' % (n = ' + str(n) + ')')
+    
+        PooledMedian = np.round(np.median(DataPooled)*Mult*100)/100
+        PooledVar = np.round(np.mean(np.abs(DataPooled*Mult - PooledMedian))*10000/PooledMedian)/100
+        print('Pooled -> ' + str(PooledMedian) + ' ' + unit + ' ' + u"\u00B1" + ' ' + str(PooledVar)  + ' % (n = ' + str(nPooled) + ')' )
     
