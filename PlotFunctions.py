@@ -196,10 +196,10 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
     ######### Parameters of fit ###########
     
       
-    fig4,ax4 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,3.5))
+    fig4,ax4 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,4.5))
     fig4.suptitle(Title + ' - Growth start time')
       
-    fig5,ax5 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,3.5))
+    fig5,ax5 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,4.5))
     fig5.suptitle(Title + ' - Growth rate')
     
     fig6,ax6 = plt.subplots(dpi = 250,facecolor='white',figsize=(3.5,2.25))
@@ -271,10 +271,10 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
         
          
         bp4 = ax4.boxplot(tdebs[i], positions = [i], labels = [lab],patch_artist = True, boxprops=boxprops, capprops =plotprops,
-                    showfliers = False,whiskerprops=plotprops,medianprops =plotprops)
+                    showfliers = False,whiskerprops=plotprops,medianprops =plotprops,widths=0.63)
         
         bp5 = ax5.boxplot(Gs[i], positions = [i], labels = [lab],patch_artist = True, boxprops=boxprops, capprops =plotprops,
-                    showfliers = False,whiskerprops=plotprops,medianprops =plotprops)
+                    showfliers = False,whiskerprops=plotprops,medianprops =plotprops,widths=0.63)
         
         bp6 = ax6.boxplot(Area0[i], positions = [i], labels = [lab],patch_artist = True, boxprops=boxprops, capprops =plotprops, 
             showfliers = False,whiskerprops=plotprops,medianprops =plotprops) 
@@ -299,8 +299,8 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
             ax10.hist(tdebs[i]-np.median(tdebs[i]), nbins, density=True, facecolor=colors[i], alpha=0.5)
 
             
-    sns.swarmplot(x=grouping,y=pd.concat(tdebs),color = 'gray', size=2, ax = ax4)
-    sns.swarmplot(x=grouping,y=pd.concat(Gs),color = 'gray', size=2, ax = ax5)
+    sns.swarmplot(x=grouping,y=pd.concat(tdebs),color = 'gray', size=3.5, ax = ax4)
+    sns.swarmplot(x=grouping,y=pd.concat(Gs),color = 'gray', size=3.5, ax = ax5)
     sns.swarmplot(x=grouping,y=pd.concat(Area0),color = 'gray', size=2, ax = ax6) 
     sns.swarmplot(x=grouping,y=pd.concat(AreaStart),color = 'gray', size=2, ax = ax16)
     
@@ -485,7 +485,7 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
     n = len(GDs)
     
     # Figure for E ratios 
-    f3,ax3 = plt.subplot_mosaic(vf.mosaicList(n)[0], dpi=200, figsize=(8,5))
+    f3,ax3 = plt.subplot_mosaic(vf.mosaicList(n)[0], dpi=200, figsize=(10,6.2))
     f3.patch.set_facecolor('white')
     ax3['a'].set_title('Growth rates change\n caused by Osmotic choc')
     
@@ -537,9 +537,9 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
                 fig00, ax00 = plt.subplots(dpi=300,figsize = (3,4.2))
                 ax00.hist(RevA[i], facecolor=colors[i]) # ,density = True
                 fig00.suptitle('Mean : ' + str(np.round(RevA[i].mean()*100)/100) + ' \np = ' + pstring)
-                ax00.set_xlabel('Deformation reversibility (%)')
+                ax00.set_xlabel('Deformation\nirreversibility (%) ')
                 ax00.set_ylabel('Count')
-                ax00.legend(['mean = ' + str(np.round(RevA[i].mean()*100)/100) + ' \np = ' + pstring],fontsize='small',loc = 'upper right')
+                ax00.legend(['mean = ' + str(np.round(RevA[i].mean()*100)/100) + ' \np = ' + pstring],fontsize='x-small',loc = 'upper right')
                 
                 fig00.tight_layout()
                 
@@ -584,7 +584,7 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
     ### E ratios histograms
     ax3['a'].hist(AllRatios,color='gray', density = True, label = 'Pooled data')
     ax3['a'].set_ylabel('Density')
-    ax3['a'].set_xlabel('Deformation reversibility')
+    ax3['a'].set_xlabel('Deformation irreversibility')
     ax3['a'].set_title('Mean : ' + '{0:.2f}'.format(AllRatios.mean()))
     ax3['a'].legend()
     f3.tight_layout()
@@ -595,8 +595,8 @@ def compareHydroMech(GDs, Labels, colors,P, Title, **kwargs):
     fig1,ax1,capEcomp,medEcomp = vf.boxswarmplot(Title + '\n\nElastic bulk modulus (compression)','E (MPa)',
                                                  Ecomps,colors,Labels[:],figsize=(3,4.2))
     
-    fig10,ax10,capRevA,medRevA = vf.boxswarmplot(Title + '\n\nDeformation reversibility','Reversibility (%)',
-                                                 RevA,colors,Labels[:],figsize=(3,4.2))
+    fig10,ax10,capRevA,medRevA = vf.boxswarmplot(Title + '\n\nDeformation irreversibility','Irreversibility (%)',
+                                                 RevA,colors,Labels[:],figsize=(3.85,3.3))
 
     fig2,ax2,capLcomp,medLcomp = vf.boxswarmplot(Title + '\n\nConductivity (compression)','L/H0_Comp (min-1)',Lcomps,colors,Labels[:])
     fig20,ax20,capLrel,medLrel = vf.boxswarmplot(Title + '\n\nConductivity (relaxation)','L/H0_Rel (min-1)',Lrels,colors,Labels[:])       
