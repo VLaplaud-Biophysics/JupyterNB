@@ -283,15 +283,15 @@ def fitAreaGrowth(StackList,Rows,GD,FPH,Delay,Th, **kwargs):
         
         if DebugPlots & VPlt:
             
-            fig0, [ax01,ax02] = plt.subplots(ncols=2, dpi=300)
+            fig0, [ax01,ax02] = plt.subplots(ncols=2, dpi=300, figsize = (6,4))
             
             fig0.suptitle(FitResPlot.name)
 
             ax01.set_title(s + ' - tdeb = ' + str(round(FitResPlot.P_init[0]*10)/10) +' min.\n' +
             'T = ' + str(round(FitResPlot.P_init[1]/60*10)/10)  + ' hours.\nR2 = ' 
                           + str(FitResPlot.R2_init))
-            ax01.plot(Time,FitResPlot.values,'*r',ms=3)
-            ax01.plot(Time,FitResPlot.f(Time,*FitResPlot.P_init),'--b')
+            ax01.plot(Time/60,FitResPlot.values,'*r',ms=3)
+            ax01.plot(Time/60,FitResPlot.f(Time,*FitResPlot.P_init),'--b')
             ax01.set_xlabel('Time (min)')
             ax01.set_ylabel('Area (mm²)')
             # ax01.set_xscale('log')
@@ -300,10 +300,10 @@ def fitAreaGrowth(StackList,Rows,GD,FPH,Delay,Th, **kwargs):
             ax02.set_title(s + ' - tdeb = ' + str(round(FitResPlot.tdeb()*10)/10) +  ' min.\n' +
             'T = ' + str(round(FitResPlot.tau()/60*10)/10)  +  ' hours.\nR2 = ' 
                           + str(FitResPlot.R2()))
-            ax02.plot(Time,AreaC,'*b',ms=3)
-            ax02.plot(Time[FitResPlot.FI],AreaC[FitResPlot.FI],'*c',ms=3)
-            ax02.plot(Time,FitResPlot.fC(),'--m',lw=1)
-            ax02.set_xlabel('Time (min)')
+            ax02.plot(Time/60,AreaC,'*b',ms=3)
+            ax02.plot(Time[FitResPlot.FI]/60,AreaC[FitResPlot.FI],'*c',ms=3)
+            ax02.plot(Time/60,FitResPlot.fC(),'--m',lw=1)
+            ax02.set_xlabel('Time (hours)')
             ax02.set_ylabel('Area (mm²)')
             # ax02.set_xscale('log')
             # ax02.set_yscale('log')

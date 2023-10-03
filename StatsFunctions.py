@@ -162,6 +162,8 @@ def Corr(GDs,labels, **kwargs):
                     g.ax_joint.set_ylabel(colslab[j],fontsize = 35)
                     # g.ax_joint.set_ylim([0,110])
                     # g.ax_joint.set_xlim(left=0)
+                    # g.ax_joint.set_ylim([2,24])
+                    # g.ax_joint.set_xlim([-0.1,1.35])
                     g.ax_joint.tick_params(axis='both', labelsize=30)
                     
                     

@@ -202,7 +202,7 @@ def compareGrowth(GDs, Labels, colors,P, Title, **kwargs):
     fig5,ax5 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,4.5))
     fig5.suptitle(Title + ' - Growth rate')
     
-    fig6,ax6 = plt.subplots(dpi = 250,facecolor='white',figsize=(3.5,2.25))
+    fig6,ax6 = plt.subplots(dpi = 250,facecolor='white',figsize=(7,4.5))
     fig6.suptitle(Title + ' - Starting area') 
 
     fig16,ax16 = plt.subplots(dpi = 250,facecolor='white',figsize=(3.5,2.25))
